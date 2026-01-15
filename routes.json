@@ -1,0 +1,107 @@
+{
+  "healing": {
+    "title": "힐링 테마",
+    "start": "h0",
+    "nodes": {
+      "h0": {
+        "text": "여행을 시작합니다. 다음 이동 방식을 선택하세요.",
+        "choices": [
+          {
+            "label": "A. 천천히 걸어서 이동 (산책 코스)",
+            "next": "h_walk"
+          },
+          {
+            "label": "B. 대중교통 이용 (짧은 코스)",
+            "next": "h_transit"
+          },
+          {
+            "label": "C. 자전거 이용 (자전거 코스)",
+            "next": "h_bike"
+          }
+        ]
+      },
+      "h_walk": {
+        "text": "산책 코스로 이동합니다. 잠시 쉬어갈 장소를 선택하세요.",
+        "choices": [
+          {
+            "label": "A. 공원/쉼터",
+            "next": "h_park"
+          },
+          {
+            "label": "B. 카페/실내",
+            "next": "h_cafe"
+          }
+        ]
+      },
+      "h_transit": {
+        "text": "짧은 코스로 이동합니다. 다음 활동을 선택하세요.",
+        "choices": [
+          {
+            "label": "A. 전망 포인트 들르기",
+            "next": "h_view"
+          },
+          {
+            "label": "B. 바로 휴식 공간으로",
+            "next": "h_cafe"
+          }
+        ]
+      },
+      "h_bike": {
+        "text": "자전거 코스로 이동합니다. 라이딩 루트를 선택하세요.",
+        "choices": [
+          {
+            "label": "A. 강/하천변 루트",
+            "next": "h_river"
+          },
+          {
+            "label": "B. 공원 순환 루트",
+            "next": "h_park"
+          }
+        ]
+      },
+      "h_park": {
+        "text": "✅ 엔딩: 조용한 휴식 루트 완주! 도서관으로 돌아가 엔딩북을 확인하세요.",
+        "ending": true
+      },
+      "h_cafe": {
+        "text": "✅ 엔딩: 따뜻한 실내 힐링 루트 완주! 도서관으로 돌아가 엔딩북을 확인하세요.",
+        "ending": true
+      },
+      "h_view": {
+        "text": "✅ 엔딩: 짧지만 꽉 찬 힐링 루트 완주! 도서관으로 돌아가 엔딩북을 확인하세요.",
+        "ending": true
+      },
+      "h_river": {
+        "text": "✅ 엔딩: 바람 따라 달린 루트 완주! 도서관으로 돌아가 엔딩북을 확인하세요.",
+        "ending": true
+      }
+    }
+  },
+  "history": {
+    "title": "역사 테마",
+    "start": "r0",
+    "nodes": {
+      "r0": {
+        "text": "역사 테마를 시작합니다. 관람 방식을 선택하세요.",
+        "choices": [
+          {
+            "label": "A. 설명 위주로 천천히",
+            "next": "r_slow"
+          },
+          {
+            "label": "B. 공간 중심으로 빠르게",
+            "next": "r_fast"
+          }
+        ]
+      },
+      "r_slow": {
+        "text": "✅ 엔딩: 깊이 있는 관람 루트 완주! 도서관에서 엔딩북을 확인하세요.",
+        "ending": true
+      },
+      "r_fast": {
+        "text": "✅ 엔딩: 핵심 동선 루트 완주! 도서관에서 엔딩북을 확인하세요.",
+        "ending": true
+      }
+    }
+  }
+}

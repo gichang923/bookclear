@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BOOKCLEAR - 선택형 관광 코스</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,sans-serif;margin:0;background:#f6f7fb;color:#111;}
+    .wrap{max-width:760px;margin:0 auto;padding:20px;}
+    .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 8px 22px rgba(0,0,0,.06);margin:14px 0;}
+    h1{font-size:20px;margin:0 0 6px;}
+    .muted{color:#666;font-size:14px;line-height:1.4}
+    .text{font-size:16px;line-height:1.6;margin:12px 0 8px;}
+    button{width:100%;text-align:left;border:1px solid #e6e7ef;background:#fff;border-radius:12px;padding:12px 12px;margin:8px 0;font-size:15px;cursor:pointer;}
+    button:hover{background:#fafbff}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .pill{background:#eef2ff;border-radius:999px;padding:6px 10px;font-size:13px;color:#3647d6}
+    .footer{font-size:12px;color:#777;margin-top:16px}
+    .small{font-size:13px}
+    .link{color:#3647d6;text-decoration:underline;cursor:pointer}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="topbar">
+        <div>
+          <h1 id="title">BOOKCLEAR</h1>
+          <div class="muted" id="subtitle">QR로 시작하는 선택형 관광 코스</div>
+        </div>
+        <div class="pill" id="themePill">테마: -</div>
+      </div>
+      <div class="text" id="text">로딩 중…</div>
+      <div id="choices"></div>
+      <div class="row">
+        <button class="small" id="backBtn" style="width:auto">← 뒤로</button>
+        <button class="small" id="restartBtn" style="width:auto">⟲ 처음으로</button>
+      </div>
+      <div class="footer">
+        *이 데모는 “선택 흐름” 예시입니다. 실제 장소/지도 링크는 routes.json에 추가하세요.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="muted">
+        <b>운영 팁</b><br/>
+        1) QR URL에 <span class="pill">?theme=healing</span> 처럼 테마 파라미터를 붙이면 해당 테마로 바로 시작합니다.<br/>
+        2) 장소 안내는 각 노드에 <code>mapUrl</code>을 넣어 버튼으로 보여줄 수 있습니다.<br/>
+        3) 선택 기록은 로컬에 저장되며(브라우저), 필요하면 구글폼/시트로 전송하도록 확장 가능합니다.
+      </div>
+    </div>
+  </div>
+
+<script>
+async function main(){
+  const res = await fetch('./routes.json');
+  const ROUTES = await res.json();
+
+  const params = new URLSearchParams(location.search);
+  const themeKey = params.get('theme') || Object.keys(ROUTES)[0];
+  const theme = ROUTES[themeKey] || ROUTES[Object.keys(ROUTES)[0]];
+  const themeName = theme.title || themeKey;
+
+  const titleEl = document.getElementById('title');
+  const pillEl = document.getElementById('themePill');
+  const textEl = document.getElementById('text');
+  const choicesEl = document.getElementById('choices');
+  const backBtn = document.getElementById('backBtn');
+  const restartBtn = document.getElementById('restartBtn');
+
+  titleEl.textContent = 'BOOKCLEAR';
+  pillEl.textContent = '테마: ' + themeName;
+
+  const history = [];
+  let currentId = theme.start;
+
+  function render(){
+    const node = theme.nodes[currentId];
+    choicesEl.innerHTML = '';
+    if(!node){
+      textEl.textContent = '해당 루트를 찾을 수 없어요. routes.json을 확인하세요.';
+      return;
+    }
+    textEl.textContent = node.text || '';
+    if(node.ending){
+      const b = document.createElement('button');
+      b.textContent = '도서관으로 돌아가 엔딩북 확인하기';
+      b.onclick = () => alert('완주 인증은 도서관 스탬프/스티커로 진행하세요!');
+      choicesEl.appendChild(b);
+      return;
+    }
+    (node.choices || []).forEach(ch=>{
+      const btn = document.createElement('button');
+      btn.textContent = ch.label;
+      btn.onclick = () => {
+        history.push(currentId);
+        currentId = ch.next;
+        render();
+      };
+      choicesEl.appendChild(btn);
+
+      if(ch.mapUrl){
+        const mapBtn = document.createElement('button');
+        mapBtn.innerHTML = '지도 열기 (새 창) ↗';
+        mapBtn.onclick = () => window.open(ch.mapUrl, '_blank');
+        choicesEl.appendChild(mapBtn);
+      }
+    });
+  }
+
+  backBtn.onclick = () => {
+    if(history.length===0) return;
+    currentId = history.pop();
+    render();
+  };
+  restartBtn.onclick = () => {
+    history.length = 0;
+    currentId = theme.start;
+    render();
+  };
+
+  render();
+}
+main();
+</script>
+</body>
+</html>
