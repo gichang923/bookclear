@@ -5,6 +5,7 @@
     "nodes": {
       "h0": {
         "text": "여행을 시작합니다. 다음 이동 방식을 선택하세요.",
+        "bg": "images/healing_start.jpg",
         "choices": [
           {
             "label": "A. 천천히 걸어서 이동 (산책 코스)",
@@ -22,19 +23,21 @@
       },
       "h_walk": {
         "text": "산책 코스로 이동합니다. 잠시 쉬어갈 장소를 선택하세요.",
+        "bg": "images/healing_walk.jpg",
         "choices": [
           {
-            "label": "A. 공원/쉼터",
+            "label": "A. 조용한 공원/쉼터",
             "next": "h_park"
           },
           {
-            "label": "B. 카페/실내",
+            "label": "B. 카페/실내 공간",
             "next": "h_cafe"
           }
         ]
       },
       "h_transit": {
-        "text": "짧은 코스로 이동합니다. 다음 활동을 선택하세요.",
+        "text": "짧은 코스로 이동합니다. 다음을 선택하세요.",
+        "bg": "images/healing_mid.jpg",
         "choices": [
           {
             "label": "A. 전망 포인트 들르기",
@@ -48,6 +51,7 @@
       },
       "h_bike": {
         "text": "자전거 코스로 이동합니다. 라이딩 루트를 선택하세요.",
+        "bg": "images/healing_bike.jpg",
         "choices": [
           {
             "label": "A. 강/하천변 루트",
@@ -61,18 +65,22 @@
       },
       "h_park": {
         "text": "✅ 엔딩: 조용한 휴식 루트 완주! 도서관으로 돌아가 엔딩북을 확인하세요.",
+        "bg": "images/healing_end.jpg",
         "ending": true
       },
       "h_cafe": {
         "text": "✅ 엔딩: 따뜻한 실내 힐링 루트 완주! 도서관으로 돌아가 엔딩북을 확인하세요.",
+        "bg": "images/healing_end.jpg",
         "ending": true
       },
       "h_view": {
         "text": "✅ 엔딩: 짧지만 꽉 찬 힐링 루트 완주! 도서관으로 돌아가 엔딩북을 확인하세요.",
+        "bg": "images/healing_end.jpg",
         "ending": true
       },
       "h_river": {
         "text": "✅ 엔딩: 바람 따라 달린 루트 완주! 도서관으로 돌아가 엔딩북을 확인하세요.",
+        "bg": "images/healing_end.jpg",
         "ending": true
       }
     }
@@ -83,23 +91,54 @@
     "nodes": {
       "r0": {
         "text": "역사 테마를 시작합니다. 관람 방식을 선택하세요.",
+        "bg": "images/history_start.jpg",
         "choices": [
           {
             "label": "A. 설명 위주로 천천히",
             "next": "r_slow"
           },
           {
-            "label": "B. 공간 중심으로 빠르게",
+            "label": "B. 핵심 동선으로 빠르게",
             "next": "r_fast"
           }
         ]
       },
       "r_slow": {
-        "text": "✅ 엔딩: 깊이 있는 관람 루트 완주! 도서관에서 엔딩북을 확인하세요.",
-        "ending": true
+        "text": "천천히 관람합니다. 다음 선택을 진행하세요.",
+        "bg": "images/history_mid.jpg",
+        "choices": [
+          {
+            "label": "A. 대표 장소 먼저",
+            "next": "r_end_main"
+          },
+          {
+            "label": "B. 숨은 장소 먼저",
+            "next": "r_end_hidden"
+          }
+        ]
       },
       "r_fast": {
-        "text": "✅ 엔딩: 핵심 동선 루트 완주! 도서관에서 엔딩북을 확인하세요.",
+        "text": "핵심 동선을 빠르게 이동합니다. 다음 선택을 진행하세요.",
+        "bg": "images/history_mid.jpg",
+        "choices": [
+          {
+            "label": "A. 사진 포인트 추가",
+            "next": "r_end_main"
+          },
+          {
+            "label": "B. 바로 마무리",
+            "next": "r_end_hidden"
+          }
+        ]
+      },
+      "r_end_main": {
+        "text": "✅ 엔딩: ‘대표 명소’ 루트 완주! 도서관에서 엔딩북을 확인하세요.",
+        "bg": "images/history_end.jpg",
+        "ending": true
+      },
+      "r_end_hidden": {
+        "text": "✅ 엔딩: ‘숨은 역사’ 루트 완주! 도서관에서 엔딩북을 확인하세요.",
+        "bg": "images/history_end.jpg",
         "ending": true
       }
     }

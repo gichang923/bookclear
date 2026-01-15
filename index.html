@@ -5,24 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BOOKCLEAR - 선택형 관광 코스</title>
   <style>
-    .fade-text {
-  animation: fadeInUp 0.8s ease forwards;
-  opacity: 0;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,sans-serif;margin:0;background:#f6f7fb;color:#111;}
     .wrap{max-width:760px;margin:0 auto;padding:20px;}
-    .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 8px 22px rgba(0,0,0,.06);margin:14px 0;}
+    .card{background:rgba(255,255,255,0.92);backdrop-filter: blur(2px);border-radius:16px;padding:18px;box-shadow:0 8px 22px rgba(0,0,0,.10);margin:14px 0;}
     h1{font-size:20px;margin:0 0 6px;}
     .muted{color:#666;font-size:14px;line-height:1.4}
     .text{font-size:16px;line-height:1.6;margin:12px 0 8px;}
@@ -32,11 +17,38 @@
     .pill{background:#eef2ff;border-radius:999px;padding:6px 10px;font-size:13px;color:#3647d6}
     .footer{font-size:12px;color:#777;margin-top:16px}
     .small{font-size:13px}
-    .link{color:#3647d6;text-decoration:underline;cursor:pointer}
     .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+    /* 배경 레이어(사진 기반 2D 느낌) */
+    #bg{
+      position: fixed;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+      filter: brightness(0.80) saturate(1.12) contrast(1.06) blur(0.3px);
+      transform: scale(1.06);
+      transition: opacity .35s ease;
+      opacity: 1;
+    }
+    .bg-motion{
+      animation: slowPan 18s ease-in-out infinite alternate;
+    }
+    @keyframes slowPan{
+      from { transform: scale(1.06) translateY(0px); }
+      to   { transform: scale(1.10) translateY(-8px); }
+    }
+
+    /* 텍스트/버튼 애니메이션 */
+    .fade-text { animation: fadeInUp 0.7s ease forwards; opacity: 0; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .choice-btn { animation: popIn 0.25s ease forwards; transform: scale(0.98); }
+    @keyframes popIn { to { transform: scale(1); } }
   </style>
 </head>
 <body>
+  <div id="bg"></div>
+
   <div class="wrap">
     <div class="card">
       <div class="topbar">
@@ -46,23 +58,17 @@
         </div>
         <div class="pill" id="themePill">테마: -</div>
       </div>
+
       <div class="text" id="text">로딩 중…</div>
       <div id="choices"></div>
+
       <div class="row">
         <button class="small" id="backBtn" style="width:auto">← 뒤로</button>
         <button class="small" id="restartBtn" style="width:auto">⟲ 처음으로</button>
       </div>
-      <div class="footer">
-        *이 데모는 “선택 흐름” 예시입니다. 실제 장소/지도 링크는 routes.json에 추가하세요.
-      </div>
-    </div>
 
-    <div class="card">
-      <div class="muted">
-        <b>운영 팁</b><br/>
-        1) QR URL에 <span class="pill">?theme=healing</span> 처럼 테마 파라미터를 붙이면 해당 테마로 바로 시작합니다.<br/>
-        2) 장소 안내는 각 노드에 <code>mapUrl</code>을 넣어 버튼으로 보여줄 수 있습니다.<br/>
-        3) 선택 기록은 로컬에 저장되며(브라우저), 필요하면 구글폼/시트로 전송하도록 확장 가능합니다.
+      <div class="footer">
+        *배경 이미지가 없으면 기본 배경(default.jpg)으로 표시됩니다. images/ 폴더에 파일을 올리고 routes.json의 bg를 맞춰주세요.
       </div>
     </div>
   </div>
@@ -83,6 +89,7 @@ async function main(){
   const choicesEl = document.getElementById('choices');
   const backBtn = document.getElementById('backBtn');
   const restartBtn = document.getElementById('restartBtn');
+  const bgEl = document.getElementById('bg');
 
   titleEl.textContent = 'BOOKCLEAR';
   pillEl.textContent = '테마: ' + themeName;
@@ -99,6 +106,16 @@ async function main(){
       .replaceAll("'", '&#039;');
   }
 
+  function applyBg(node){
+    const bgUrl = (node && node.bg) ? node.bg : 'images/default.jpg';
+    bgEl.style.opacity = 0;
+    setTimeout(() => {
+      bgEl.style.backgroundImage = `url(${bgUrl})`;
+      bgEl.classList.add('bg-motion');
+      bgEl.style.opacity = 1;
+    }, 150);
+  }
+
   function render(){
     const node = theme.nodes[currentId];
     choicesEl.innerHTML = '';
@@ -108,6 +125,7 @@ async function main(){
       return;
     }
 
+    applyBg(node);
     textEl.innerHTML = `<div class="fade-text">${escapeHtml(node.text || '')}</div>`;
 
     if(node.ending){
@@ -123,13 +141,11 @@ async function main(){
       const btn = document.createElement('button');
       btn.classList.add('choice-btn');
       btn.textContent = ch.label;
-
       btn.onclick = () => {
         history.push(currentId);
         currentId = ch.next;
         render();
       };
-
       choicesEl.appendChild(btn);
     });
   }
@@ -150,7 +166,5 @@ async function main(){
 }
 main();
 </script>
-
-
 </body>
 </html>
