@@ -5,6 +5,21 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BOOKCLEAR - 선택형 관광 코스</title>
   <style>
+    .fade-text {
+  animation: fadeInUp 0.8s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,sans-serif;margin:0;background:#f6f7fb;color:#111;}
     .wrap{max-width:760px;margin:0 auto;padding:20px;}
     .card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 8px 22px rgba(0,0,0,.06);margin:14px 0;}
@@ -72,48 +87,64 @@ async function main(){
   titleEl.textContent = 'BOOKCLEAR';
   pillEl.textContent = '테마: ' + themeName;
 
+  // 선택 기록(뒤로가기용)
   const history = [];
   let currentId = theme.start;
+
+  // 안전하게 문자열을 HTML로 넣기 위한 최소 처리
+  function escapeHtml(str){
+    return String(str)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
 
   function render(){
     const node = theme.nodes[currentId];
     choicesEl.innerHTML = '';
+
     if(!node){
       textEl.textContent = '해당 루트를 찾을 수 없어요. routes.json을 확인하세요.';
       return;
     }
-    textEl.textContent = node.text || '';
+
+    // ✅ 텍스트 페이드인 적용
+    textEl.innerHTML = `<div class="fade-text">${escapeHtml(node.text || '')}</div>`;
+
+    // 엔딩이면 선택지 대신 완료 버튼
     if(node.ending){
       const b = document.createElement('button');
+      b.classList.add('choice-btn');
       b.textContent = '도서관으로 돌아가 엔딩북 확인하기';
       b.onclick = () => alert('완주 인증은 도서관 스탬프/스티커로 진행하세요!');
       choicesEl.appendChild(b);
       return;
     }
+
+    // ✅ 선택지 버튼 생성 + 버튼 등장 애니메이션
     (node.choices || []).forEach(ch=>{
       const btn = document.createElement('button');
+      btn.classList.add('choice-btn');
       btn.textContent = ch.label;
+
       btn.onclick = () => {
         history.push(currentId);
         currentId = ch.next;
         render();
       };
-      choicesEl.appendChild(btn);
 
-      if(ch.mapUrl){
-        const mapBtn = document.createElement('button');
-        mapBtn.innerHTML = '지도 열기 (새 창) ↗';
-        mapBtn.onclick = () => window.open(ch.mapUrl, '_blank');
-        choicesEl.appendChild(mapBtn);
-      }
+      choicesEl.appendChild(btn);
     });
   }
 
   backBtn.onclick = () => {
-    if(history.length===0) return;
+    if(history.length === 0) return;
     currentId = history.pop();
     render();
   };
+
   restartBtn.onclick = () => {
     history.length = 0;
     currentId = theme.start;
@@ -123,6 +154,14 @@ async function main(){
   render();
 }
 main();
+  .fade-text { animation: fadeInUp 0.7s ease forwards; opacity: 0; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.choice-btn { animation: popIn 0.25s ease forwards; transform: scale(0.98); }
+@keyframes popIn { to { transform: scale(1); } }
+
 </script>
+
+
 </body>
 </html>
