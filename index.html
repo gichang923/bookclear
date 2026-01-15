@@ -87,11 +87,9 @@ async function main(){
   titleEl.textContent = 'BOOKCLEAR';
   pillEl.textContent = '테마: ' + themeName;
 
-  // 선택 기록(뒤로가기용)
   const history = [];
   let currentId = theme.start;
 
-  // 안전하게 문자열을 HTML로 넣기 위한 최소 처리
   function escapeHtml(str){
     return String(str)
       .replaceAll('&', '&amp;')
@@ -110,10 +108,8 @@ async function main(){
       return;
     }
 
-    // ✅ 텍스트 페이드인 적용
     textEl.innerHTML = `<div class="fade-text">${escapeHtml(node.text || '')}</div>`;
 
-    // 엔딩이면 선택지 대신 완료 버튼
     if(node.ending){
       const b = document.createElement('button');
       b.classList.add('choice-btn');
@@ -123,7 +119,6 @@ async function main(){
       return;
     }
 
-    // ✅ 선택지 버튼 생성 + 버튼 등장 애니메이션
     (node.choices || []).forEach(ch=>{
       const btn = document.createElement('button');
       btn.classList.add('choice-btn');
@@ -154,12 +149,6 @@ async function main(){
   render();
 }
 main();
-  .fade-text { animation: fadeInUp 0.7s ease forwards; opacity: 0; }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.choice-btn { animation: popIn 0.25s ease forwards; transform: scale(0.98); }
-@keyframes popIn { to { transform: scale(1); } }
-
 </script>
 
 
